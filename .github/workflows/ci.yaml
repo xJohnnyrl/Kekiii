@@ -60,7 +60,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no root@146.190.168.13 << EOF
             docker pull ${{ secrets.DOCKER_USERNAME }}/kekiii-bot:latest
-            docker run -d --name kekiii-bot-new --restart unless-stopped -e DISCORD_TOKEN${{secrets.DISCORD_TOKEN}} -e CLIENT_ID${{secrets.CLIENT_ID}} -e GUILD_ID${{secrets.GUILD_ID}} -p 3001:3000 ${{ secrets.DOCKER_USERNAME }}/kekiii-bot:latest
+            docker run -d --name kekiii-bot-new --restart unless-stopped -e DISCORD_TOKEN=${{secrets.DISCORD_TOKEN}} -e CLIENT_ID=${{secrets.CLIENT_ID}} -e GUILD_ID=${{secrets.GUILD_ID}} -p 3001:3000 ${{ secrets.DOCKER_USERNAME }}/kekiii-bot:latest
             sleep 5
             docker stop kekiii-bot || true
             docker rm kekiii-bot || true
