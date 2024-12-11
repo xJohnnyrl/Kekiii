@@ -30,7 +30,8 @@ jobs:
       - name: Detect Changes in ./commands
         id: detect-changes
         run: |
-          changes=$(git diff --name-only HEAD^ HEAD | grep "^commands/" || true)
+          git fetch --depth=2
+          changes=$(git diff --name-only HEAD~1 HEAD | grep "^commands/" || true)
           if  [ -n "$changes"]; then
             echo "Files changed in ./commands"
             echo "$changes"
@@ -50,10 +51,10 @@ jobs:
           bun install
           bun run ./registerCommands.ts
 
-          - name: Build and Push Docker Image
-          run: |
-            docker build -t ${{ secrets.DOCKER_USERNAME }}/kekiii-bot:latest .
-            docker push ${{ secrets.DOCKER_USERNAME }}/kekiii-bot:latest
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/kekiii-bot:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/kekiii-bot:latest
 
       - name: Deploy to DigitalOcean
         run: |
