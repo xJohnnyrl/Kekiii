@@ -33,7 +33,7 @@ jobs:
           git fetch --depth=2
           changes=$(git diff --name-only HEAD~1 HEAD | grep "^commands/" || true)
           echo "Changes found: '$changes'"
-          if [ -n "$changes"]; then
+          if [ -n "$changes" ]; then
             echo "Files changed in ./commands"
             echo "$changes"
             echo "commands_changed=true" >> $GITHUB_ENV
