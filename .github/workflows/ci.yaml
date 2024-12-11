@@ -1,0 +1,57 @@
+name: Deploy to DigitalOcean with Docker
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.DO_SSH_KEY }}
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Detect Changes in ./commands
+        id: detect-changes
+        run: |
+          git fetch origin main
+          if git diff --quiet HEAD^ HEAD -- ./commands; then
+            echo "commands_changed=false" >> $GITHUB_ENV
+          else
+            echo "commands_changed=true" >> $GITHUB_ENV
+          fi
+
+      - name: Run registerCommands.ts (if ./commands changed)
+        if: env.commands_changed == 'true'
+        run: |
+          npm install
+          npx ts-node ./registerCommands.ts
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t your-docker-username/discord-bot:latest .
+          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          docker push ${{ secrets.DOCKER_USERNAME }}/discord-bot:latest
+
+      - name: Deploy to DigitalOcean
+        run: |
+          ssh -o StrictHostKeyChecking=no github@ << EOF
+            docker pull ${{ secrets.DOCKER_USERNAME }}/kekiii-bot:latest
+            docker run -d --name kekiii-bot-new --restart unless-stopped -p 3001:3000 ${{ secrets.DOCKER_USERNAME }}/kekiii-bot:latest
+            sleep 5
+            docker stop kekiii-bot || true
+            docker rm kekiii-bot || true
+            docker rename kekiii-bot-new kekiii-bot
+          EOF
