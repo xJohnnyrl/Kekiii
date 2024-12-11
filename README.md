@@ -2,6 +2,8 @@
 
 Welcome to **Kekiii**, a cute and powerful Discord bot that helps you manage your server with ease. Built with love and designed with a little sprinkle of magic, Kekiii is here to assist you with fun commands and useful features. Ready to get started? Follow the instructions below! ✨
 
+![cake-eyes](public/img/1500x500.jpg)
+
 ---
 
 ## 📚 Table of Contents
@@ -25,7 +27,7 @@ Before running **Kekiii**, make sure you have the following:
 
 ---
 
-## 🏃‍♀️ Running Locally (using Bun)
+## 🏃 Running Locally (using Bun)
 
 Follow these steps to run **Kekiii** locally:
 
