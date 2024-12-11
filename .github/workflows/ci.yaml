@@ -17,11 +17,8 @@ jobs:
         uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.DO_SSH_KEY }}
-
-      - name: Install Bun
-        run: |
-          curl -fsSL https://bun.sh/install | bash
-          export PATH="$HOME/.bun/bin:$PATH"
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Detect Changes in ./commands
         id: detect-changes
