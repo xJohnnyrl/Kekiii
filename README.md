@@ -116,6 +116,6 @@ If you're new to Discord bot development or want to learn more, here are some he
 
 ## 📜 License
 
-This project is licensed under the [MIT License](LICENSE). ✨
+This project is licensed under the [Apache 2.0 License](LICENSE). ✨
 
 ---
