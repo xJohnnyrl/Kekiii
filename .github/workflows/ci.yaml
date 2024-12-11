@@ -32,6 +32,10 @@ jobs:
 
       - name: Run registerCommands.ts (if ./commands changed)
         if: env.commands_changed == 'true'
+        env:
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          GUILD_ID: ${{ secrets.GUILD_ID }}
         run: |
           bun install
           bun run ./registerCommands.ts
