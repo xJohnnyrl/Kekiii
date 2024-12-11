@@ -30,7 +30,7 @@ jobs:
       - name: Detect Changes in ./commands
         id: detect-changes
         run: |
-          changes=$(git diff --name-only HEAD^ HEAD | grep "^commands/ || true)
+          changes=$(git diff --name-only HEAD^ HEAD | grep "^commands/"" || true)
           if  [ -n "$changes"]; then
             echo "Files changed in ./commands"
             echo "$changes"
