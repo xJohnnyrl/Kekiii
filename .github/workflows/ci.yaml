@@ -30,11 +30,14 @@ jobs:
       - name: Detect Changes in ./commands
         id: detect-changes
         run: |
-          git fetch origin main
-          if git diff --quiet HEAD^ HEAD -- ./commands; then
-            echo "commands_changed=false" >> $GITHUB_ENV
-          else
+          changes=$(git diff --name-only HEAD^ HEAD | grep "^commands/ || true)
+          if  [ -n "$changes"]; then
+            echo "Files changed in ./commands"
+            echo "$changes"
             echo "commands_changed=true" >> $GITHUB_ENV
+          else
+            echo "No files changed in ./commands"
+            echo "commands_changed=false" >> $GITHUB_ENV
           fi
 
       - name: Run registerCommands.ts (if ./commands changed)
