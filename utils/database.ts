@@ -3,7 +3,7 @@ import type { Database, AsyncDatabase } from "@/interfaces/database";
 
 // Initialize the database connection
 const db = new sqlite3.Database(
-  process.env.DEPLOYMENT_ENV === "dev" ? "./main.db" : "app/main.db",
+  process.env.DEPLOYMENT_ENV === "dev" ? "./main.db" : "/app/main.db",
   (err) => {
     if (err) {
       console.error("Error connecting to the database:", err.message);
