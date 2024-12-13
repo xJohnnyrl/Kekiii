@@ -14,7 +14,7 @@ if (
 const { DISCORD_TOKEN } = process.env;
 
 const client = new ExtendedClient({
-  intents: [GatewayIntentBits.Guilds],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
 });
 
 process.on("unhandledRejection", (error) => {

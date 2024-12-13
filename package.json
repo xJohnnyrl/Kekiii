@@ -10,7 +10,9 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "better-sqlite3": "^11.7.0",
     "discord.js": "^14.16.3",
-    "pm2": "^5.4.3"
+    "pm2": "^5.4.3",
+    "sqlite3": "^5.1.7"
   }
 }
