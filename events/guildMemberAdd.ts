@@ -9,13 +9,13 @@ export default {
 
     try {
       const existingUser = await db.get(
-        `SELECT user_id FROM users WHERE user_id = $id`,
+        `SELECT user_id FROM profiles WHERE user_id = $id`,
         { $id: id }
       );
 
       if (!existingUser) {
         await db.run(
-          `INSERT INTO users (user_id, username) VALUES ($id, $username)`,
+          `INSERT INTO profiles (user_id, username) VALUES ($id, $username)`,
           {
             $id: id,
             $username: username,
