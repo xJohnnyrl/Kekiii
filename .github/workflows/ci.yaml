@@ -1,0 +1,70 @@
+name: Deploy to DigitalOcean
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.DO_SSH_KEY }}
+
+      - name: Log in to Docker
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Detect Changes in ./commands
+        id: detect-changes
+        run: |
+          git fetch --depth=2
+          changes=$(git diff --name-only HEAD~1 HEAD | grep "^commands/" || true)
+          echo "Changes found: '$changes'"
+          if [ -n "$changes" ]; then
+            echo "Files changed in ./commands"
+            echo "$changes"
+            echo "commands_changed=true" >> $GITHUB_ENV
+          else
+            echo "No files changed in ./commands"
+            echo "commands_changed=false" >> $GITHUB_ENV
+          fi
+
+      - name: Run registerCommands.ts (if ./commands changed)
+        if: env.commands_changed == 'true'
+        env:
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          GUILD_ID: ${{ secrets.GUILD_ID }}
+          COMMAND_REGISTRATION: ${{ secrets.COMMAND_REGISTRATION }}
+        run: |
+          bun install
+          bun run ./registerCommands.ts
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/kekiii-bot:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/kekiii-bot:latest
+
+      - name: Deploy to DigitalOcean
+        run: |
+          ssh -o StrictHostKeyChecking=no root@${{ secrets.VPS_IP }} << EOF
+            docker pull ${{ secrets.DOCKER_USERNAME }}/kekiii-bot:latest
+            docker run -td --name kekiii-bot-new --restart unless-stopped -e DISCORD_TOKEN=${{secrets.DISCORD_TOKEN}} -e CLIENT_ID=${{secrets.CLIENT_ID}} -e GUILD_ID=${{secrets.GUILD_ID}} -e DEPLOYMENT_ENV=prod -v /var/lib/kekiii/main.db:/app/main.db -p 3000 ${{ secrets.DOCKER_USERNAME }}/kekiii-bot:latest
+            sleep 5
+            docker stop kekiii-bot || true
+            docker rm kekiii-bot || true
+            docker rename kekiii-bot-new kekiii-bot
+          EOF

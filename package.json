@@ -1,0 +1,16 @@
+{
+  "name": "kekiii",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "eslint": "^9.24.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "discord.js": "^14.18.0",
+    "pm2": "^5.4.3"
+  }
+}
